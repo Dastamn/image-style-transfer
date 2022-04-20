@@ -60,12 +60,13 @@ def save_img(t: torch.Tensor, filename, dir):
     save_image(denorm(t), filename)
 
 
-def make_gif(out_filename: str, src_dir, ext: str = 'jpg', frame_duration: int = 200):
+def make_gif(src_dir, ext: str = 'jpg', frame_duration: int = 200):
     files = sorted(glob(f'{src_dir}/*.{ext}'),
-                   key=lambda x: int(filter(str.isdigit, x)))
+                   key=lambda x: int(''.join(filter(str.isdigit, x))))
     assert len(files) > 1, 'Must provide more than 1 file.'
     frames = [Image.open(img) for img in files]
-    frames[0].save(out_filename, format='gif', append_images=frames[1:],
+    _, dir = os.path.split(src_dir)
+    frames[0].save(f'{dir}.gif', format='gif', append_images=frames[1:],
                    save_all=True, duration=frame_duration, loop=0)
 
 
