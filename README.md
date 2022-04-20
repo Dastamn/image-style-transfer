@@ -22,18 +22,7 @@ PyTorch implementation of [A Neural Algorithm of Artistic Style [1]](https://arx
 $ python conv_style_transfer.py --content <path_to_content_image> --style <path_to_style_image>
 ```
 
-<style>
-    section {
-        display: flex;
-        justify-content: space-around;
-        margin: 10px 0px
-    }
-    img {
-        margin: 0px 10px;
-    }
-</style>
-
-<section>
+<section align='center'>
     <img src='content/house.jpg' height='200'/>
     <img src='content/castle.jpg' height='200'/>
     <img src='content/art_bridge.jpg' height='200'/>
@@ -41,10 +30,11 @@ $ python conv_style_transfer.py --content <path_to_content_image> --style <path_
 
 ---
 
-<section>
+<section align='center'>
     <img src='style/the_scream.jpg' height='200' align='center'/>
 </section>
-<section>
+
+<section align='center'>
     <img src='samples/house_the_scream.jpg' height='200'/>
     <img src='samples/castle_the_scream.jpg' height='200'/>
     <img src='samples/art_bridge_the_scream.jpg' height='200'/>
@@ -52,10 +42,11 @@ $ python conv_style_transfer.py --content <path_to_content_image> --style <path_
 
 ---
 
-<section>
+<section align='center'>
     <img src='style/candy.jpg' height='200' align='center'/>
 </section>
-<section>
+
+<section align='center'>
     <img src='samples/house_candy.jpg' height='200'/>
     <img src='samples/castle_candy.jpg' height='200'/>
     <img src='samples/art_bridge_candy.jpg' height='200'/>
