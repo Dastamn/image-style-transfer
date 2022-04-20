@@ -58,11 +58,16 @@ def transfer(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Convolutional Style Transfer')
-    parser.add_argument('--content', type=str, default=None)
-    parser.add_argument('--style', type=str, default=None)
-    parser.add_argument('--maxsize', type=int, default=512)
-    parser.add_argument('--alpha', type=float, default=1)
-    parser.add_argument('--beta', type=float, default=1e5)
+    parser.add_argument('--content', type=str, default=None,
+                        help='Path to content image')
+    parser.add_argument('--style', type=str, default=None,
+                        help='Path to style image')
+    parser.add_argument('--maxsize', type=int, default=512,
+                        help='Maximum image height')
+    parser.add_argument('--alpha', type=float, default=1,
+                        help='Content loss weight')
+    parser.add_argument('--beta', type=float, default=1e5,
+                        help='Style loss weight')
     parser.add_argument('--lr', type=float, default=3e-3)
     parser.add_argument('--steps', type=int, default=10000)
     parser.add_argument('--savedir', type=str, default='conv_transfer_samples')
