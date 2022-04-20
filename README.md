@@ -22,17 +22,21 @@ PyTorch implementation of [A Neural Algorithm of Artistic Style [1]](https://arx
 $ python conv_style_transfer.py --content <path_to_content_image> --style <path_to_style_image>
 ```
 
+#### Image samples
+
 <section align='center'>
     <img src='content/house.jpg' height='200'/>
     <img src='content/castle.jpg' height='200'/>
     <img src='content/art_bridge.jpg' height='200'/>
 </section>
 
----
+#### Generated styled images
 
 <section align='center'>
     <img src='style/the_scream.jpg' height='200' align='center'/>
 </section>
+
+&ensp;
 
 <section align='center'>
     <img src='samples/house_the_scream.jpg' height='200'/>
@@ -40,16 +44,24 @@ $ python conv_style_transfer.py --content <path_to_content_image> --style <path_
     <img src='samples/art_bridge_the_scream.jpg' height='200'/>
 </section>
 
----
+&ensp;
 
 <section align='center'>
     <img src='style/candy.jpg' height='200' align='center'/>
 </section>
 
+&ensp;
+
 <section align='center'>
     <img src='samples/house_candy.jpg' height='200'/>
     <img src='samples/castle_candy.jpg' height='200'/>
     <img src='samples/art_bridge_candy.jpg' height='200'/>
+</section>
+
+#### Styling process
+
+<section align='center'>
+    <img src='samples/art_bridge_the_scream.gif' align='center'/>
 </section>
 
 ### 2) Image Transformation Training
