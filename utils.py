@@ -1,7 +1,11 @@
+import torch.nn as nn
+from torch.optim.optimizer import Optimizer
 import os
 import re
 from glob import glob
 from io import BytesIO
+from numbers import Number
+from typing import Tuple
 
 import numpy as np
 import requests
@@ -34,7 +38,7 @@ def denorm(t: torch.Tensor, mean=(0.229, 0.224, 0.225), std=(0.485, 0.456, 0.406
     return _t
 
 
-def load_img(uri: str, max_size=512, shape=None) -> torch.Tensor:
+def load_img(uri: str, max_size: int = 512, shape: Tuple[int, int] = None) -> torch.Tensor:
     if bool(re.match(r'https?:\/\/.*\.(?:png|jpg)', uri, re.IGNORECASE)):
         response = requests.get(uri)
         img = Image.open(BytesIO(response.content)).convert('RGB')
@@ -53,14 +57,14 @@ def load_img(uri: str, max_size=512, shape=None) -> torch.Tensor:
     return transform(img)[:3, :, :].unsqueeze(0)
 
 
-def save_img(t: torch.Tensor, filename, dir):
+def save_img(t: torch.Tensor, filename: str, dir: str = None):
     if dir:
         check_dir(dir)
         filename = os.path.join(dir, filename)
     save_image(denorm(t), filename)
 
 
-def make_gif(src_dir, ext: str = 'jpg', frame_duration: int = 200):
+def make_gif(src_dir: str, ext: str = 'jpg', frame_duration: int = 200):
     files = sorted(glob(f'{src_dir}/*.{ext}'),
                    key=lambda x: int(''.join(filter(str.isdigit, x))))
     assert len(files) > 1, 'Must provide more than 1 file.'
@@ -70,7 +74,7 @@ def make_gif(src_dir, ext: str = 'jpg', frame_duration: int = 200):
                    save_all=True, duration=frame_duration, loop=0)
 
 
-def load_checkpoint(model, optimizer, lr, filename, dir='checkpoint') -> int:
+def load_checkpoint(model: nn.Module, optimizer: Optimizer, lr: float, filename: str, dir: str = 'checkpoint') -> Tuple[int, Number]:
     if dir:
         filename = os.path.join(dir, filename)
     print(f"=> Loading checkpoint from '{filename}'...")
@@ -83,11 +87,12 @@ def load_checkpoint(model, optimizer, lr, filename, dir='checkpoint') -> int:
     optimizer.load_state_dict(checkpoint['optimizer'])
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
+    batch = checkpoint['batch'] if 'batch' in checkpoint else float('inf')
     print('Done.')
-    return checkpoint['epoch'], checkpoint['batch'] + 1
+    return checkpoint['epoch'], batch
 
 
-def save_checkpoint(model, optimizer, filename, epoch, batch, dir='checkpoint'):
+def save_checkpoint(model: nn.Module, optimizer: Optimizer, filename: str, epoch: int, batch: int = None, dir: str = 'checkpoint'):
     if dir:
         check_dir(dir)
         filename = os.path.join(dir, filename)
@@ -95,13 +100,14 @@ def save_checkpoint(model, optimizer, filename, epoch, batch, dir='checkpoint'):
     checkpoint = {
         'state_dict': model.state_dict(),
         'optimizer': optimizer.state_dict(),
-        'epoch': epoch,
-        'batch': batch
+        'epoch': epoch
     }
+    if batch != None:
+        checkpoint['batch'] = batch
     torch.save(checkpoint, filename)
     print('Done.')
 
 
-def check_dir(dir):
+def check_dir(dir: str):
     if not os.path.exists(dir):
         os.makedirs(dir)
