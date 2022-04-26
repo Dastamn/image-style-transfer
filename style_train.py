@@ -38,9 +38,14 @@ def train(args):
     optimizer = Adam(net.parameters(), args.lr)
     epoch_start, batch_start = 1, 0
     if args.resume:
-        epoch_start, batch_start = load_checkpoint(
+        prev_epoch, prev_batch = load_checkpoint(
             net, optimizer, args.lr, f'{style_name}.pt')
-        assert epoch_start < args.epochs
+        start_epoch = prev_epoch
+        if isinstance(prev_batch, int):
+            start_batch = prev_batch + 1
+        if start_batch >= len(loader):
+            start_batch = 0
+            start_epoch += 1
     mse = nn.MSELoss()
     # compute style gram matrices
     style_features = vgg(style)
@@ -66,21 +71,21 @@ def train(args):
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-            # sample
             if (i + 1) % 100 == 0 and args.content:
-                net.eval()
-                content_name = Path(args.content).stem
-                content = load_img(
-                    args.content, max_size=args.maxsize).to(config.DEVICE)
-                with torch.no_grad():
-                    save_img(net(content), f'{content_name}_{style_name}_{epoch}_{i+1}.jpg', os.path.join(
-                        savedir, f'{content_name}_{style_name}'))
-                net.train()
-            # batch checkpoint
-            if (i + 1) % 100 == 0:
+                # batch checkpoint cause my gpu still sucks
                 save_checkpoint(net, optimizer, f'{style_name}.pt', epoch, i)
+                if args.content:
+                    # sample
+                    net.eval()
+                    content_name = Path(args.content).stem
+                    content = load_img(
+                        args.content, max_size=args.maxsize).to(config.DEVICE)
+                    with torch.no_grad():
+                        save_img(net(content), f'{content_name}_{style_name}_{len(loader)*(epoch-1)+(i+1)}.jpg',
+                                 os.path.join(savedir, f'{content_name}_{style_name}'))
+                    net.train()
         # epoch checkpoint
-        save_checkpoint(net, optimizer, f'{style_name}.pt', epoch, i)
+        save_checkpoint(net, optimizer, f'{style_name}.pt', epoch)
 
 
 if __name__ == '__main__':
